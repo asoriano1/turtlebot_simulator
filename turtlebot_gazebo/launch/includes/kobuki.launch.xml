@@ -12,7 +12,16 @@
   <!-- Gazebo model spawner -->
   <node name="spawn_turtlebot_model" pkg="gazebo_ros" type="spawn_model"
         args="$(arg robot_initial_pose) -unpause -urdf -param robot_description -model $(arg prefix_frame)"/>
-  
+
+<rosparam file="$(find turtlebot_bringup)/param/control.yaml" command="load"/>
+<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+		output="screen" args="
+              joint_elevator_controller
+						  joint_read_state_controller 
+						  --shutdown-timeout 1
+						  ">
+	</node>
+
   <!-- Velocity muxer -->
   <node pkg="nodelet" type="nodelet" name="mobile_base_nodelet_manager" args="manager"/>
   <node pkg="nodelet" type="nodelet" name="cmd_vel_mux"
